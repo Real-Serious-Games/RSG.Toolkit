@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("RSG.Toolkit")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Small toolkit of generally useful C# code. Used by Real Serious Games to develop applications on Unity3D.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Real Serious Games")]
 [assembly: AssemblyProduct("RSG.Toolkit")]
