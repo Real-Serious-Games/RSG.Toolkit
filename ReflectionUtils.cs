@@ -154,71 +154,10 @@ namespace RSG.Utils
             return TypeHasAttribute(type, typeof(AttributeT));
         }
 
-        private static readonly HashSet<string> assembliesToIgnore = new HashSet<string>
-        {
-            "UnityEditor",
-            "Moq",
-        };
-           
-        /// <summary>
-        /// Returns true to ignore a paritcular assembly.
-        /// </summary>
-        private static bool IgnoreAssembly(Assembly assembly, Predicate<string> ignoreFilter)
-        {
-            try
-            {
-                if (assembly.GlobalAssemblyCache)
-                {
-                    // Ignore system assemblies by default.
-                    return true;
-                }
-
-                if (assembly.ManifestModule.Name == "<In Memory Module>" ||  // MS
-                    assembly.ManifestModule.Name == "Default Dynamic Module") // Mono
-                {
-                    // Ignore dynamically generated assemblies.
-                    return true;
-                }
-
-                if (assembly.Location.EndsWith(".vshost.exe"))
-                {
-                    // Ignore VS generated assemblies.
-                    return true;
-                }
-
-                // Ignore specific assemblies.
-                var assemblyName = Path.GetFileNameWithoutExtension(assembly.Location);
-                if (assembliesToIgnore.Contains(assemblyName))
-                {
-                    return true;
-                }
-
-                // Ignore assemblies specified by caller.
-                if (ignoreFilter != null && ignoreFilter(assemblyName))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Failed to assess Assembly for ignoring:\n" + assembly.ManifestModule.Name, ex);
-            }            
-        }
-
         /// <summary>
         /// Return an enumerable of all known types.
         /// </summary>
         public static IEnumerable<Type> GetAllTypes()
-        {
-            return GetAllTypes(null);
-        }
-
-        /// <summary>
-        /// Return an enumerable of all known types.
-        /// </summary>
-        public static IEnumerable<Type> GetAllTypes(Predicate<string> ignoreFilter)
         {
             var assemblies =
                 AppDomain.CurrentDomain.GetAssemblies()
@@ -230,11 +169,6 @@ namespace RSG.Utils
 
             foreach (var assembly in assemblies)
             {
-                if (ignoreFilter != null && IgnoreAssembly(assembly, ignoreFilter))
-                {
-                    continue;
-                }
-
                 Type[] types;
 
                 try
@@ -257,7 +191,7 @@ namespace RSG.Utils
         /// <summary>
         /// Find all types that are marked with the specified attribute.
         /// </summary>
-        public static Type[] FindTypesMarkedByAttributes(IEnumerable<Type> markerAttributeTypes, Predicate<string> ignoreFilter)
+        public static Type[] FindTypesMarkedByAttributes(IEnumerable<Type> markerAttributeTypes)
         {
             if (markerAttributeTypes == null)
             {
@@ -271,7 +205,7 @@ namespace RSG.Utils
 
             var typesFound = new List<Type>();
 
-            foreach (var type in GetAllTypes(ignoreFilter))
+            foreach (var type in GetAllTypes())
             {
                 try
                 {

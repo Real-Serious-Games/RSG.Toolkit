@@ -283,7 +283,7 @@ namespace RSG.Utils
         {
             Argument.NotNull(() => attributesTypes);
 
-            return ReflectionUtils.FindTypesMarkedByAttributes(attributesTypes, assemblyIgnoreFilter);
+            return ReflectionUtils.FindTypesMarkedByAttributes(attributesTypes);
         }
 
         /// <summary>
